@@ -35,6 +35,11 @@ export const allocationStatus = pgEnum("allocation_status", [
   "ACTIVE",
   "INACTIVE",
 ]);
+export const allocationApprovalStatus = pgEnum("allocation_approval_status", [
+  "APPROVED",
+  "REJECTED",
+  "PENDING",
+]);
 export const displayColour = pgEnum("display_colour", [
   "BLUE",
   "GREEN",
@@ -269,6 +274,8 @@ export const allocation = pgTable(
     takenDays: integer("taken_days").notNull(),
     remainingDays: integer("remaining_days").notNull(),
     validityYear: integer("validity_year").notNull(),
+    status: allocationApprovalStatus("status").notNull().default("PENDING"),
+    approver: uuid("approver").references(() => user.id),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
