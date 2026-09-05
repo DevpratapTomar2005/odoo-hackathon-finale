@@ -198,10 +198,8 @@ export const attendance = pgTable(
     checkIn: timestamp("check_in", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    checkOut: timestamp("check_out", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    workedHours: integer("worked_hours").notNull(),
+    checkOut: timestamp("check_out", { withTimezone: true }),
+    workedHours: integer("worked_hours").notNull().default(0),
     status: attendanceStatus("status").notNull().default("PRESENT"),
     overtimeHours: integer("overtime_hours").notNull().default(0),
 

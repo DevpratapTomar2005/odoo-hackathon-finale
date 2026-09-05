@@ -1,0 +1,1 @@
+ALTER TABLE "attendances" ALTER COLUMN "worked_hours" SET DEFAULT 0;
