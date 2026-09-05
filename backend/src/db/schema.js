@@ -65,6 +65,34 @@ export const daysOfWeek = pgEnum("days_of_week", [
   "SATURDAY",
   "SUNDAY",
 ]);
+export const salaryStructureStatus = pgEnum("salary_structure_status", [
+  "ACTIVE",
+  "INACTIVE",
+]);
+export const salaryRuleCategory = pgEnum("salary_rule_category", [
+  "BASIC",
+  "ALLOWANCE",
+  "DEDUCTION",
+]);
+// NOTE: added "FORMULA" — PRD allows formula-based computation, only FIXED/PERCENTAGE
+// were implemented before. Existing rows are unaffected since FIXED/PERCENTAGE stay valid.
+export const computationMethod = pgEnum("computation_method", [
+  "FIXED",
+  "PERCENTAGE",
+  "FORMULA",
+]);
+export const payrunStatus = pgEnum("payrun_status", [
+  "DRAFT",
+  "COMPUTED",
+  "VALIDATED",
+  "PAID",
+]);
+export const payslipStatus = pgEnum("payslip_status", [
+  "DRAFT",
+  "COMPUTED",
+  "VALIDATED",
+  "PAID",
+]);
 
 export const user = pgTable(
   "users",
@@ -284,4 +312,129 @@ export const allocation = pgTable(
     index("allocations_employee_id_idx").on(table.employeeId),
     index("allocations_time_off_type_id_idx").on(table.timeoffTypeId),
   ],
+);
+
+export const salaryStructure = pgTable("salary_structures", {
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  name: varchar("name", { length: 100 }).notNull(),
+  status: salaryStructureStatus("status").notNull().default("ACTIVE"),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const salaryRule = pgTable(
+  "salary_rules",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv7()),
+    salaryStructureId: uuid("salary_structure_id")
+      .notNull()
+      .references(() => salaryStructure.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 100 }).notNull(),
+    code: varchar("code", { length: 50 }).notNull(),
+    category: salaryRuleCategory("category").notNull(),
+    sequence: integer("sequence").notNull(),
+    computationMethod: computationMethod("computation_method").notNull(),
+    amount: decimal("amount", { precision: 12, scale: 2 }),
+    percentage: decimal("percentage", { precision: 5, scale: 2 }),
+    percentageBaseCode: varchar("percentage_base_code", { length: 50 }),
+    formula: varchar("formula", { length: 500 }),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("salary_rules_structure_id_idx").on(table.salaryStructureId),
+    uniqueIndex("salary_rules_structure_code_idx").on(
+      table.salaryStructureId,
+      table.code,
+    ),
+  ],
+);
+
+export const payrun = pgTable(
+  "payruns",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv7()),
+    name: varchar("name", { length: 100 }).notNull(),
+    periodStart: date("period_start").notNull(),
+    periodEnd: date("period_end").notNull(),
+    salaryStructureId: uuid("salary_structure_id")
+      .notNull()
+      .references(() => salaryStructure.id),
+    status: payrunStatus("status").notNull().default("DRAFT"),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("payruns_salary_structure_id_idx").on(table.salaryStructureId),
+  ],
+);
+
+export const payslip = pgTable(
+  "payslips",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv7()),
+    payrunId: uuid("payrun_id")
+      .notNull()
+      .references(() => payrun.id, { onDelete: "cascade" }),
+    employeeId: uuid("employee_id")
+      .notNull()
+      .references(() => employee.id),
+    contractId: uuid("contract_id").references(() => contract.id),
+    basicSalary: decimal("basic_salary", { precision: 12, scale: 2 })
+      .notNull()
+      .default("0"),
+    grossSalary: decimal("gross_salary", { precision: 12, scale: 2 })
+      .notNull()
+      .default("0"),
+    netSalary: decimal("net_salary", { precision: 12, scale: 2 })
+      .notNull()
+      .default("0"),
+    status: payslipStatus("status").notNull().default("DRAFT"),
+    warnings: varchar("warnings", { length: 500 }),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("payslips_payrun_id_idx").on(table.payrunId),
+    index("payslips_employee_id_idx").on(table.employeeId),
+    uniqueIndex("payslips_payrun_employee_idx").on(
+      table.payrunId,
+      table.employeeId,
+    ),
+  ],
+);
+
+export const payslipLine = pgTable(
+  "payslip_lines",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv7()),
+    payslipId: uuid("payslip_id")
+      .notNull()
+      .references(() => payslip.id, { onDelete: "cascade" }),
+    salaryRuleId: uuid("salary_rule_id")
+      .notNull()
+      .references(() => salaryRule.id),
+    name: varchar("name", { length: 100 }).notNull(),
+    code: varchar("code", { length: 50 }).notNull(),
+    category: salaryRuleCategory("category").notNull(),
+    amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
+    sequence: integer("sequence").notNull(),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [index("payslip_lines_payslip_id_idx").on(table.payslipId)],
 );
