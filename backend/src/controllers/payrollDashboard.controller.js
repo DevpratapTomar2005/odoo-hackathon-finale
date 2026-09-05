@@ -36,8 +36,18 @@ const getPayrollDashboard = asyncHandler(async (req, res) => {
     .from(employee)
     .where(employeeFilters.length ? and(...employeeFilters) : undefined);
 
+  // If no employees match the filters, return zeroed-out dashboard (don't error)
   if (scopedEmployees.length === 0) {
-    throw new ApiError(404, "No employees found for the selected filters");
+    return res.status(200).json(
+      new ApiResponse(200, "Payroll dashboard fetched successfully", {
+        filters: { periodStart: rangeStart, periodEnd: rangeEnd, department: department ?? null, employeeStatus: employeeStatus ?? null },
+        kpis: { totalNetSalaryPaid: 0, payslipsGenerated: 0, averageSalary: 0, approvedTimeOff: 0, attendanceHealth: null },
+        charts: { salaryCostByDepartment: [], monthlyNetSalaryTrend: [] },
+        attendanceOverview: { present: 0, absent: 0, missingCheckOuts: 0, totalOvertimeHours: 0 },
+        timeOffOverview: { approved: 0, pending: 0 },
+        alerts: { payslipsWithWarnings: [], employeesMissingActiveContract: [] },
+      }),
+    );
   }
 
   const scopedEmployeeIds = scopedEmployees.map((emp) => emp.id);

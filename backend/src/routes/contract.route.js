@@ -8,27 +8,27 @@ const router = express.Router();
 
 router.route("/create").post(
     verifyAuth,
-    authorizeRole("ADMIN"),
+    authorizeRole("ADMIN", "HR_MANAGER", "PAYROLL_ADMIN"),
     validateInput(createContractSchema),
     contractController.createContract
 );
 
 router.route("/all").get(
     verifyAuth,
-    authorizeRole("ADMIN"),
+    authorizeRole("ADMIN", "HR_MANAGER", "HR_PAYROLL", "PAYROLL_ADMIN"),
     contractController.getAllContracts
 );
 
 router.route("/:id").get(
     verifyAuth,
-    authorizeRole("ADMIN"),
+    authorizeRole("ADMIN", "HR_MANAGER", "HR_PAYROLL", "PAYROLL_ADMIN"),
     validateInput(idParamSchema),
     contractController.getContractById
 );
 
 router.route("/:id").put(
     verifyAuth,
-    authorizeRole("ADMIN"),
+    authorizeRole("ADMIN", "HR_MANAGER", "PAYROLL_ADMIN"),
     validateInput(updateContractSchema),
     contractController.updateContract
 );

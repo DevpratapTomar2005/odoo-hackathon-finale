@@ -2,7 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { employee, contract } from "../db/schema.js"; 
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 
 const createContract = asyncHandler(async (req, res) => {
@@ -40,7 +40,7 @@ const createContract = asyncHandler(async (req, res) => {
 });
 
 const getAllContracts = asyncHandler(async (req, res) => {
-  const allContracts = await db.select().from(contract);
+  const allContracts = await db.select().from(contract).orderBy(desc(contract.createdAt));
 
   return res
     .status(200)

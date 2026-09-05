@@ -2,7 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { salaryStructure } from "../db/schema.js";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 
 const createSalaryStructure = asyncHandler(async (req, res) => {
@@ -73,11 +73,7 @@ const editSalaryStructure = asyncHandler(async (req, res) => {
 });
 
 const getAllSalaryStructures = asyncHandler(async (req, res) => {
-  const allStructures = await db.select().from(salaryStructure);
-
-  if (allStructures.length === 0) {
-    throw new ApiError(404, "No salary structures found");
-  }
+  const allStructures = await db.select().from(salaryStructure).orderBy(desc(salaryStructure.createdAt));
 
   return res
     .status(200)

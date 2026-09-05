@@ -14,40 +14,41 @@ const router = express.Router();
 
 router.route("/:employeeId/create").post(
   verifyAuth,
-  authorizeRole("HR_MANAGER","ADMIN"),
+  authorizeRole("ADMIN", "HR_MANAGER"),
   validateInput(createAllocationSchema),
   allocationController.createAllocation
 );
 
 router.route("/:employeeId/all").get(
   verifyAuth,
+  authorizeRole("EMPLOYEE", "ADMIN", "HR_MANAGER", "HR_PAYROLL", "PAYROLL_ADMIN"),
   validateInput(employeeIdParamSchema),
   allocationController.getAllocationsByEmployee
 );
 
 router.route("/all").get(
   verifyAuth,
-  authorizeRole("HR_MANAGER","ADMIN"),
+  authorizeRole("ADMIN", "HR_MANAGER"),
   allocationController.getAllAllocations
 );
 
 router.route("/:allocationId").put(
   verifyAuth,
-  authorizeRole("HR_MANAGER","ADMIN"),
+  authorizeRole("ADMIN", "HR_MANAGER"),
   validateInput(editAllocationSchema),
   allocationController.editAllocation
 );
 
 router.route("/:allocationId/approve").patch(
   verifyAuth,
-  authorizeRole("HR_MANAGER","ADMIN"),
+  authorizeRole("ADMIN", "HR_MANAGER"),
   validateInput(allocationIdParamSchema),
   allocationController.approveAllocation
 );
 
 router.route("/:allocationId/reject").patch(
   verifyAuth,
-  authorizeRole("HR_MANAGER","ADMIN"),
+  authorizeRole("ADMIN", "HR_MANAGER"),
   validateInput(allocationIdParamSchema),
   allocationController.rejectAllocation
 );

@@ -189,11 +189,8 @@ const getSalaryRulesByStructure = asyncHandler(async (req, res) => {
   const rules = await db
     .select()
     .from(salaryRule)
-    .where(eq(salaryRule.salaryStructureId, salaryStructureId));
-
-  if (rules.length === 0) {
-    throw new ApiError(404, "No salary rules found for this structure");
-  }
+    .where(eq(salaryRule.salaryStructureId, salaryStructureId))
+    .orderBy(salaryRule.sequence);
 
   return res
     .status(200)

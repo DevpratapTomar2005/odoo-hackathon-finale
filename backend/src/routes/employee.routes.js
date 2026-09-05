@@ -12,7 +12,7 @@ router
   .route("/me")
   .get(
     verifyAuth,
-    authorizeRole("EMPLOYEE", "HR_MANAGER", "ADMIN"),
+    authorizeRole("ADMIN", "EMPLOYEE", "HR_MANAGER", "HR_PAYROLL", "PAYROLL_ADMIN"),
     employeeController.getMe,
   );
 
