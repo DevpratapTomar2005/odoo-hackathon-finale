@@ -2,7 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { allocation, employee, timeoffType } from "../db/schema.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 
 const createAllocation = asyncHandler(async (req, res) => {
@@ -63,7 +63,9 @@ const createAllocation = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, "Allocation created successfully", newAllocation));
+    .json(
+      new ApiResponse(201, "Allocation created successfully", newAllocation),
+    );
 });
 
 const editAllocation = asyncHandler(async (req, res) => {
@@ -199,11 +201,7 @@ const rejectAllocation = asyncHandler(async (req, res) => {
 });
 
 const getAllAllocations = asyncHandler(async (req, res) => {
-  const allAllocations = await db.select().from(allocation);
-
-  if (allAllocations.length === 0) {
-    throw new ApiError(404, "No allocations found");
-  }
+  const allAllocations = await db.select().from(allocation).orderBy(desc(allocation.createdAt));
 
   return res
     .status(200)
@@ -218,11 +216,8 @@ const getAllocationsByEmployee = asyncHandler(async (req, res) => {
   const allocations = await db
     .select()
     .from(allocation)
-    .where(eq(allocation.employeeId, employeeId));
-
-  if (allocations.length === 0) {
-    throw new ApiError(404, "No allocations found for this employee");
-  }
+    .where(eq(allocation.employeeId, employeeId))
+    .orderBy(desc(allocation.createdAt));
 
   return res
     .status(200)

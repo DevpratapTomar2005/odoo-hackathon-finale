@@ -2,16 +2,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { payslip, payslipLine, employee, payrun } from "../db/schema.js";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { generatePayslipPdf } from "../utils/generatePayslipPdf.js";
 
 const getAllPayslips = asyncHandler(async (req, res) => {
-  const allPayslips = await db.select().from(payslip);
-
-  if (allPayslips.length === 0) {
-    throw new ApiError(404, "No payslips found");
-  }
+  const allPayslips = await db.select().from(payslip).orderBy(desc(payslip.createdAt));
 
   return res
     .status(200)
@@ -24,11 +20,8 @@ const getPayslipsByEmployee = asyncHandler(async (req, res) => {
   const employeePayslips = await db
     .select()
     .from(payslip)
-    .where(eq(payslip.employeeId, employeeId));
-
-  if (employeePayslips.length === 0) {
-    throw new ApiError(404, "No payslips found for this employee");
-  }
+    .where(eq(payslip.employeeId, employeeId))
+    .orderBy(desc(payslip.createdAt));
 
   return res
     .status(200)

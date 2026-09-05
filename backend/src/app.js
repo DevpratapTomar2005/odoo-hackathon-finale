@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.middleware.js";
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
@@ -14,8 +15,11 @@ import payrunRouter from "./routes/payrun.routes.js";
 import salaryRuleRouter from "./routes/salaryrule.route.js";
 import salaryStructureRouter from "./routes/salarystructure.routes.js";
 import employeeRoutes from "./routes/employee.routes.js";
+import { envConfig } from "./config/env.config.js";
 
 const app = express();
+
+app.use(cors({ origin: envConfig.CLIENT_URL, credentials: true }));
 
 app.use(express.json());
 app.use(cookieParser());

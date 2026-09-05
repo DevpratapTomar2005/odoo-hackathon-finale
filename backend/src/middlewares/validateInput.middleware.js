@@ -3,7 +3,6 @@ import { ApiError } from "../utils/ApiError.js";
 
 export const validateInput = (schema) => {
   return asyncHandler(async (req, _, next) => {
-    
     const hasRequestParts =
       schema.shape &&
       (schema.shape.body || schema.shape.query || schema.shape.params);
@@ -14,7 +13,6 @@ export const validateInput = (schema) => {
 
     const result = await schema.safeParseAsync(dataToValidate);
 
-    
     if (!result.success) {
       const issues = result.error?.issues || result.error?.errors || [];
       const errors = issues.map((err) => ({
@@ -25,11 +23,18 @@ export const validateInput = (schema) => {
       throw new ApiError(400, "Validation Error", errors);
     }
 
-    
     if (hasRequestParts) {
       if (result.data.body !== undefined) req.body = result.data.body;
-      if (result.data.query !== undefined) req.query = result.data.query;
-      if (result.data.params !== undefined) req.params = result.data.params;
+
+     
+      if (result.data.query !== undefined) {
+        Object.keys(req.query).forEach((key) => delete req.query[key]);
+        Object.assign(req.query, result.data.query);
+      }
+      if (result.data.params !== undefined) {
+        Object.keys(req.params).forEach((key) => delete req.params[key]);
+        Object.assign(req.params, result.data.params);
+      }
     } else {
       req.body = result.data;
     }
@@ -37,7 +42,3 @@ export const validateInput = (schema) => {
     next();
   });
 };
-
-
-
-

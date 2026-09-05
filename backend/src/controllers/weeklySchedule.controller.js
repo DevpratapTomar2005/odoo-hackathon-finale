@@ -7,7 +7,7 @@ import {
   workingWeeklySchedule,
   workingDaySchedule,
 } from "../db/schema.js";
-import { and, eq } from "drizzle-orm";
+import { and, eq, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 
 const createSchedule = asyncHandler(async (req, res) => {
@@ -166,7 +166,7 @@ const getWeeklySchedule = asyncHandler(async (req, res) => {
 });
 
 const getAllSchedules = asyncHandler(async (req, res) => {
-  const schedules = await db.select().from(workingWeeklySchedule);
+  const schedules = await db.select().from(workingWeeklySchedule).orderBy(desc(workingWeeklySchedule.createdAt));
   return res
     .status(200)
     .json(

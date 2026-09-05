@@ -2,7 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { employee, contract, attendance, timeoff, allocation, user } from "../db/schema.js";
-import { eq, count } from "drizzle-orm";
+import { eq, count, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 
 const getMe = asyncHandler(async (req, res) => {
@@ -60,7 +60,8 @@ const getAllEmployees = asyncHandler(async (req, res) => {
       email: user.email,
     })
     .from(employee)
-    .leftJoin(user, eq(employee.userId, user.id));
+    .leftJoin(user, eq(employee.userId, user.id))
+    .orderBy(desc(employee.createdAt));
 
   return res.status(200).json(new ApiResponse(200, "Employees fetched successfully", employees));
 });

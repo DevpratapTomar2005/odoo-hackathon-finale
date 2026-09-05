@@ -11,7 +11,7 @@ router
   .route("/")
   .get(
     verifyAuth,
-    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL"),
+    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL", "HR_MANAGER"),
     validateInput(getPayrollDashboardSchema),
     payrollDashboardController.getPayrollDashboard,
   );

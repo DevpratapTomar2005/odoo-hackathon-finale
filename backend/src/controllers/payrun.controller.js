@@ -11,7 +11,7 @@ import {
   contract,
   user,
 } from "../db/schema.js";
-import { eq, and, or, isNull, lte, gte, inArray, asc } from "drizzle-orm";
+import { eq, and, or, isNull, lte, gte, inArray, asc, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { evaluateFormula } from "../utils/formulaEvaluator.js";
 import { generatePayslipPdf } from "../utils/generatePayslipPdf.js";
@@ -442,11 +442,7 @@ const sendPayslips = asyncHandler(async (req, res) => {
 });
 
 const getAllPayruns = asyncHandler(async (req, res) => {
-  const allPayruns = await db.select().from(payrun);
-
-  if (allPayruns.length === 0) {
-    throw new ApiError(404, "No payruns found");
-  }
+  const allPayruns = await db.select().from(payrun).orderBy(desc(payrun.createdAt));
 
   return res
     .status(200)

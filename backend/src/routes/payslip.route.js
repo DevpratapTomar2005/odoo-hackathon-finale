@@ -22,7 +22,7 @@ router
   .route("/employee/:employeeId")
   .get(
     verifyAuth,
-    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL"),
+    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL", "EMPLOYEE"),
     validateInput(employeeIdParamSchema),
     payslipController.getPayslipsByEmployee,
   );
@@ -31,7 +31,7 @@ router
   .route("/:payslipId")
   .get(
     verifyAuth,
-    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL"),
+    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL", "EMPLOYEE"),
     validateInput(payslipIdParamSchema),
     payslipController.getPayslipById,
   );
@@ -40,7 +40,7 @@ router
   .route("/:payslipId/print")
   .get(
     verifyAuth,
-    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL"),
+    authorizeRole("ADMIN", "PAYROLL_ADMIN", "HR_PAYROLL", "EMPLOYEE"),
     validateInput(payslipIdParamSchema),
     payslipController.printPayslip,
   );

@@ -2,7 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { timeoffType, timeoff, employee, allocation } from "../db/schema.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { db } from "../db/db.js";
 
 const createTimeOffType = asyncHandler(async (req, res) => {
@@ -138,6 +138,13 @@ const createTimeOffRequest = asyncHandler(async (req, res) => {
     );
 });
 
+const getAllTimeOffTypes = asyncHandler(async (req, res) => {
+  const types = await db.select().from(timeoffType).orderBy(desc(timeoffType.createdAt));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Time off types fetched successfully", types));
+});
+
 const approveTimeOffRequest = asyncHandler(async (req, res) => {
   const { timeoffId } = req.params;
 
@@ -186,11 +193,12 @@ const approveTimeOffRequest = asyncHandler(async (req, res) => {
         );
       }
 
-      const requestedDays = Math.ceil(
+      const rawDiff = Math.round(
         (new Date(existingTimeOff.endDate).getTime() -
           new Date(existingTimeOff.startDate).getTime()) /
           (1000 * 60 * 60 * 24),
       );
+      const requestedDays = Math.max(1, rawDiff >= 0 ? rawDiff + 1 : 1);
 
       if (existingAllocation.remainingDays < requestedDays) {
         throw new ApiError(400, "Insufficient leave balance");
@@ -205,11 +213,12 @@ const approveTimeOffRequest = asyncHandler(async (req, res) => {
         .where(eq(allocation.id, existingAllocation.id));
     }
 
+    const approverId = req.user?.userId || req.user?.id;
     const [updatedTimeOff] = await tx
       .update(timeoff)
       .set({
         status: "APPROVED",
-        approver: req.user.userId,
+        approver: approverId,
       })
       .where(eq(timeoff.id, timeoffId))
       .returning();
@@ -273,11 +282,7 @@ const rejectTimeOffRequest = asyncHandler(async (req, res) => {
 });
 
 const getAllTimeOffRequests = asyncHandler(async (req, res) => {
-  const allTimeOffRequests = await db.select().from(timeoff);
-
-  if (allTimeOffRequests.length === 0) {
-    throw new ApiError(404, "No time off requests found");
-  }
+  const allTimeOffRequests = await db.select().from(timeoff).orderBy(desc(timeoff.createdAt));
 
   return res
     .status(200)
@@ -296,11 +301,8 @@ const getTimeOffRequestsByEmployee = asyncHandler(async (req, res) => {
   const timeOffRequests = await db
     .select()
     .from(timeoff)
-    .where(eq(timeoff.employeeId, employeeId));
-
-  if (timeOffRequests.length === 0) {
-    throw new ApiError(404, "No time off requests found for this employee");
-  }
+    .where(eq(timeoff.employeeId, employeeId))
+    .orderBy(desc(timeoff.createdAt));
 
   return res
     .status(200)
@@ -316,6 +318,7 @@ const getTimeOffRequestsByEmployee = asyncHandler(async (req, res) => {
 export default {
   createTimeOffType,
   editTimeOffType,
+  getAllTimeOffTypes,
   createTimeOffRequest,
   approveTimeOffRequest,
   rejectTimeOffRequest,
