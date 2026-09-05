@@ -3,7 +3,7 @@ import z from "zod";
 export const createUserSchema = z.object({
   firstname: z.string().max(50).toLowerCase(),
   lastname: z.string().max(50).toLowerCase(),
-  email: z.string().email("Invalid email address").trim().toLowerCase(),
+  email: z.email("Invalid email address").trim().toLowerCase(),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long" })
