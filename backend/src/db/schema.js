@@ -147,7 +147,8 @@ export const contract = pgTable(
     endDate: date("end_date"),
     status: contractStatus("status").notNull().default("ACTIVE"),
     salary: integer("salary").notNull(),
-
+    name: varchar("name", { length: 100 }).notNull(),
+    validity: integer("validity").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },

@@ -1,1 +1,0 @@
-ALTER TABLE "working_weekly_schedules" ALTER COLUMN "name" DROP DEFAULT;

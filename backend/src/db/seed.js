@@ -4,20 +4,17 @@ import {
   employee,
   timeoffType,
   contract,
-  workingSchedule,
+  workingWeeklySchedule,
+  workingDaySchedule,
 } from "./schema.js";
 import bcrypt from "bcrypt";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 const seed = async () => {
   try {
     console.log("🌱 Starting Database Seeding...\n");
     await connectDB();
 
-    
-   
-
-    // 2. Create Admin User (satisfies password validation: Admin@1234)
     console.log("\n👤 Checking / Creating Admin user...");
     const adminEmail = "admin@odoo.com";
     const adminPasswordPlain = "Admin@1234";
@@ -44,7 +41,6 @@ const seed = async () => {
       console.log(`  ℹ️ Admin user already exists: ${adminUser.email}`);
     }
 
-    // 3. Create Admin Employee Profile
     let [adminEmployee] = await db
       .select()
       .from(employee)
@@ -64,9 +60,10 @@ const seed = async () => {
       console.log(
         `  ✅ Admin employee profile created (Emp ID: ${adminEmployee.employeeId})`,
       );
+    } else {
+      console.log(`  ℹ️ Admin employee profile already exists.`);
     }
 
-    // 4. Create a Standard Test Employee
     console.log("\n👤 Checking / Creating Regular Employee user...");
     const empEmail = "employee@odoo.com";
     const empPasswordPlain = "Employee@1234";
@@ -95,7 +92,38 @@ const seed = async () => {
       );
     }
 
-    // 5. Create Employee Profile with Admin as Manager
+    let [newWeeklySchedule] = await db
+      .select()
+      .from(workingWeeklySchedule)
+      .where(eq(workingWeeklySchedule.name, "Standard Engineering Shift"));
+
+    if (!newWeeklySchedule) {
+      [newWeeklySchedule] = await db
+        .insert(workingWeeklySchedule)
+        .values({
+          name: "Standard Engineering Shift",
+          workingDays: 5,
+          workingHours: 8,
+          totalWorkingHours: 40,
+        })
+        .returning();
+
+      const targetDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
+      const batchDaysData = targetDays.map((targetDay) => ({
+        workingWeeklyScheduleId: newWeeklySchedule.id,
+        day: targetDay,
+        startTime: "09:00",
+        endTime: "17:00",
+        breakMinutes: 60,
+        dayHours: 8,
+      }));
+
+      await db.insert(workingDaySchedule).values(batchDaysData);
+      console.log("  ✅ Weekly schedule and daily shift mappings created successfully.");
+    } else {
+      console.log("  ℹ️ Weekly schedule configuration already exists.");
+    }
+
     let [regularEmployee] = await db
       .select()
       .from(employee)
@@ -111,32 +139,37 @@ const seed = async () => {
           designation: "Software Engineer",
           managerId: adminEmployee.id,
           status: "ACTIVE",
+          workingWeeklyScheduleId: newWeeklySchedule.id,
         })
         .returning();
+
       console.log(
         `  ✅ Regular employee profile created (Emp ID: ${regularEmployee.employeeId})`,
       );
+    } else {
+      console.log(`  ℹ️ Regular employee profile already exists.`);
+    }
 
-      // Add a sample contract (Salary in cents: 85,000.00 -> 8500000)
+    const [existingContract] = await db
+      .select()
+      .from(contract)
+      .where(eq(contract.employeeId, regularEmployee.id));
+
+    if (!existingContract) {
       await db.insert(contract).values({
         employeeId: regularEmployee.id,
+        name: "Standard Full-Time Tech Contract",
         startDate: "2026-01-01",
         endDate: "2027-01-01",
         status: "ACTIVE",
         salary: 8500000,
+        validity: 2027,
       });
-
-      // Add working schedule
-      await db.insert(workingSchedule).values({
-        employeeId: regularEmployee.id,
-        workingDays: 5,
-        workingHours: 8,
-        totalWorkingHours: 40,
-      });
-      console.log("  ✅ Contract and working schedule attached.");
+      console.log("  ✅ Employee contract document attached.");
+    } else {
+      console.log("  ℹ️ Employee contract row already exists.");
     }
 
-    // 6. Create Default Time-off Types
     console.log("\n🏖️ Checking / Creating Time-off Types...");
     const defaultTimeoffTypes = [
       {
@@ -171,6 +204,8 @@ const seed = async () => {
       if (!existing) {
         await db.insert(timeoffType).values(type);
         console.log(`  ✅ Created Time-off Type: ${type.name}`);
+      } else {
+        console.log(`  ℹ️ Time-off Type already exists: ${type.name}`);
       }
     }
 
