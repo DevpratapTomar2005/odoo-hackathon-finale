@@ -1,9 +1,9 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "26ec86e1-61ca-4c1c-b63c-3cc0d0779f03",
+  "id": "8acec465-1f17-419a-955b-3cb7bcf48c98",
   "prevIds": [
-    "65a3dde8-90c8-4715-a5a2-71acdb2f30ad"
+    "35e38512-7cb0-4650-9353-703c6b75c208"
   ],
   "ddl": [
     {
@@ -355,7 +355,7 @@
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "0",
       "generated": null,
       "identity": null,
       "name": "worked_hours",
@@ -457,7 +457,7 @@
     {
       "type": "date",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -489,6 +489,32 @@
       "generated": null,
       "identity": null,
       "name": "salary",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "contracts"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "contracts"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "validity",
       "entityType": "columns",
       "schema": "public",
       "table": "contracts"
@@ -1817,7 +1843,7 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "attendences_pkey",
+      "name": "attendances_pkey",
       "schema": "public",
       "table": "attendances",
       "entityType": "pks"
@@ -1897,7 +1923,7 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "working_schedules_pkey",
+      "name": "working_weekly_schedules_pkey",
       "schema": "public",
       "table": "working_weekly_schedules",
       "entityType": "pks"

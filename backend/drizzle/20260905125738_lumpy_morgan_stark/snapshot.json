@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "f99dd443-1cf6-495e-bf0e-80016bf5702f",
+  "id": "35e38512-7cb0-4650-9353-703c6b75c208",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -29,7 +29,7 @@
         "PRESENT",
         "ABSENT"
       ],
-      "name": "attendence_status",
+      "name": "attendance_status",
       "entityType": "enums",
       "schema": "public"
     },
@@ -39,6 +39,20 @@
         "EXPIRED"
       ],
       "name": "contract_status",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY"
+      ],
+      "name": "days_of_week",
       "entityType": "enums",
       "schema": "public"
     },
@@ -78,7 +92,7 @@
         "DAY",
         "HOUR"
       ],
-      "name": "typeoff_unit",
+      "name": "timeoff_unit",
       "entityType": "enums",
       "schema": "public"
     },
@@ -102,13 +116,7 @@
     },
     {
       "isRlsEnabled": false,
-      "name": "attendences",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "companies",
+      "name": "attendances",
       "entityType": "tables",
       "schema": "public"
     },
@@ -121,12 +129,6 @@
     {
       "isRlsEnabled": false,
       "name": "employees",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "otps",
       "entityType": "tables",
       "schema": "public"
     },
@@ -156,7 +158,13 @@
     },
     {
       "isRlsEnabled": false,
-      "name": "working_schedules",
+      "name": "working_day_schedules",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "working_weekly_schedules",
       "entityType": "tables",
       "schema": "public"
     },
@@ -288,7 +296,7 @@
       "name": "id",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "uuid",
@@ -301,7 +309,7 @@
       "name": "employee_id",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "date",
@@ -314,7 +322,7 @@
       "name": "date",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "timestamp with time zone",
@@ -327,7 +335,7 @@
       "name": "check_in",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "timestamp with time zone",
@@ -340,7 +348,7 @@
       "name": "check_out",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "integer",
@@ -353,10 +361,10 @@
       "name": "worked_hours",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
-      "type": "attendence_status",
+      "type": "attendance_status",
       "typeSchema": "public",
       "notNull": true,
       "dimensions": 0,
@@ -366,7 +374,7 @@
       "name": "status",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "integer",
@@ -379,7 +387,7 @@
       "name": "overtime_hours",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "timestamp",
@@ -392,7 +400,7 @@
       "name": "created_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "type": "timestamp",
@@ -405,59 +413,7 @@
       "name": "updated_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "attendences"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "companies"
-    },
-    {
-      "type": "varchar(200)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "companies"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "companies"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "companies"
+      "table": "attendances"
     },
     {
       "type": "uuid",
@@ -501,7 +457,7 @@
     {
       "type": "date",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
       "default": null,
       "generated": null,
@@ -525,7 +481,7 @@
       "table": "contracts"
     },
     {
-      "type": "numeric(10,2)",
+      "type": "integer",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
@@ -533,6 +489,32 @@
       "generated": null,
       "identity": null,
       "name": "salary",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "contracts"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "contracts"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "validity",
       "entityType": "columns",
       "schema": "public",
       "table": "contracts"
@@ -657,12 +639,12 @@
     {
       "type": "uuid",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "company_id",
+      "name": "working_weekly_schedule_id",
       "entityType": "columns",
       "schema": "public",
       "table": "employees"
@@ -694,95 +676,17 @@
       "table": "employees"
     },
     {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "otps"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "otps"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "otps"
-    },
-    {
-      "type": "varchar(6)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "otp",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "otps"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "otps"
-    },
-    {
       "type": "timestamp",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
-      "default": "now()",
+      "default": null,
       "generated": null,
       "identity": null,
-      "name": "created_at",
+      "name": "deleted_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "otps"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "otps"
+      "table": "employees"
     },
     {
       "type": "uuid",
@@ -915,7 +819,7 @@
       "table": "timeoffs"
     },
     {
-      "type": "date",
+      "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
@@ -928,7 +832,7 @@
       "table": "timeoffs"
     },
     {
-      "type": "date",
+      "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
@@ -1045,7 +949,7 @@
       "table": "time_off_types"
     },
     {
-      "type": "typeoff_unit",
+      "type": "timeoff_unit",
       "typeSchema": "public",
       "notNull": true,
       "dimensions": 0,
@@ -1201,19 +1105,6 @@
       "table": "users"
     },
     {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "false",
-      "generated": null,
-      "identity": null,
-      "name": "isVerified",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
       "type": "timestamp",
       "typeSchema": null,
       "notNull": true,
@@ -1235,6 +1126,19 @@
       "generated": null,
       "identity": null,
       "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deleted_at",
       "entityType": "columns",
       "schema": "public",
       "table": "users"
@@ -1250,7 +1154,20 @@
       "name": "id",
       "entityType": "columns",
       "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
+    },
+    {
+      "type": "days_of_week",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'MONDAY'",
+      "generated": null,
+      "identity": null,
+      "name": "day",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_day_schedules"
     },
     {
       "type": "uuid",
@@ -1260,10 +1177,36 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "employee_id",
+      "name": "working_weekly_schedule_id",
       "entityType": "columns",
       "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
+    },
+    {
+      "type": "time",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "start_time",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_day_schedules"
+    },
+    {
+      "type": "time",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "end_time",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_day_schedules"
     },
     {
       "type": "integer",
@@ -1273,10 +1216,10 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "working_days",
+      "name": "break_minutes",
       "entityType": "columns",
       "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
     },
     {
       "type": "integer",
@@ -1286,23 +1229,10 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "working_hours",
+      "name": "day_hours",
       "entityType": "columns",
       "schema": "public",
-      "table": "working_schedules"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "total_working_hours",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
     },
     {
       "type": "timestamp",
@@ -1315,7 +1245,7 @@
       "name": "created_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
     },
     {
       "type": "timestamp",
@@ -1328,7 +1258,98 @@
       "name": "updated_at",
       "entityType": "columns",
       "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "working_days",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "working_hours",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "total_working_hours",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "working_weekly_schedules"
     },
     {
       "nameExplicit": true,
@@ -1388,10 +1409,10 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "attendences_employee_id_idx",
+      "name": "attendances_employee_id_idx",
       "entityType": "indexes",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "nameExplicit": true,
@@ -1439,27 +1460,6 @@
       "nameExplicit": true,
       "columns": [
         {
-          "value": "company_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "employees_company_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "employees"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
           "value": "manager_id",
           "isExpression": false,
           "asc": true,
@@ -1476,27 +1476,6 @@
       "entityType": "indexes",
       "schema": "public",
       "table": "employees"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "user_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "otps_user_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "otps"
     },
     {
       "nameExplicit": true,
@@ -1646,27 +1625,6 @@
       "table": "users"
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "employee_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "working_schedules_employee_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "working_schedules"
-    },
-    {
       "nameExplicit": false,
       "columns": [
         "employee_id"
@@ -1677,7 +1635,7 @@
         "id"
       ],
       "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
+      "onDelete": "NO ACTION",
       "name": "allocations_employee_id_employees_id_fkey",
       "entityType": "fks",
       "schema": "public",
@@ -1711,11 +1669,11 @@
         "id"
       ],
       "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "attendences_employee_id_employees_id_fkey",
+      "onDelete": "NO ACTION",
+      "name": "attendances_employee_id_employees_id_fkey",
       "entityType": "fks",
       "schema": "public",
-      "table": "attendences"
+      "table": "attendances"
     },
     {
       "nameExplicit": false,
@@ -1728,7 +1686,7 @@
         "id"
       ],
       "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
+      "onDelete": "NO ACTION",
       "name": "contracts_employee_id_employees_id_fkey",
       "entityType": "fks",
       "schema": "public",
@@ -1757,13 +1715,13 @@
         "manager_id"
       ],
       "schemaTo": "public",
-      "tableTo": "users",
+      "tableTo": "employees",
       "columnsTo": [
         "id"
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
-      "name": "employees_manager_id_users_id_fkey",
+      "name": "employees_manager_id_employees_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "employees"
@@ -1771,36 +1729,19 @@
     {
       "nameExplicit": false,
       "columns": [
-        "company_id"
+        "working_weekly_schedule_id"
       ],
       "schemaTo": "public",
-      "tableTo": "companies",
+      "tableTo": "working_weekly_schedules",
       "columnsTo": [
         "id"
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
-      "name": "employees_company_id_companies_id_fkey",
+      "name": "employees_1LEIdTTXbvNi_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "employees"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "otps_user_id_users_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "otps"
     },
     {
       "nameExplicit": false,
@@ -1830,7 +1771,7 @@
         "id"
       ],
       "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
+      "onDelete": "NO ACTION",
       "name": "timeoffs_employee_id_employees_id_fkey",
       "entityType": "fks",
       "schema": "public",
@@ -1873,19 +1814,19 @@
     {
       "nameExplicit": false,
       "columns": [
-        "employee_id"
+        "working_weekly_schedule_id"
       ],
       "schemaTo": "public",
-      "tableTo": "employees",
+      "tableTo": "working_weekly_schedules",
       "columnsTo": [
         "id"
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
-      "name": "working_schedules_employee_id_employees_id_fkey",
+      "name": "working_day_schedules_i38CaMUa1EVU_fkey",
       "entityType": "fks",
       "schema": "public",
-      "table": "working_schedules"
+      "table": "working_day_schedules"
     },
     {
       "columns": [
@@ -1902,19 +1843,9 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "attendences_pkey",
+      "name": "attendances_pkey",
       "schema": "public",
-      "table": "attendences",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "companies_pkey",
-      "schema": "public",
-      "table": "companies",
+      "table": "attendances",
       "entityType": "pks"
     },
     {
@@ -1935,16 +1866,6 @@
       "name": "employees_pkey",
       "schema": "public",
       "table": "employees",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "otps_pkey",
-      "schema": "public",
-      "table": "otps",
       "entityType": "pks"
     },
     {
@@ -1992,21 +1913,20 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "working_schedules_pkey",
+      "name": "working_day_schedules_pkey",
       "schema": "public",
-      "table": "working_schedules",
+      "table": "working_day_schedules",
       "entityType": "pks"
     },
     {
-      "nameExplicit": false,
       "columns": [
-        "email"
+        "id"
       ],
-      "nullsNotDistinct": false,
-      "name": "otps_email_key",
+      "nameExplicit": false,
+      "name": "working_weekly_schedules_pkey",
       "schema": "public",
-      "table": "otps",
-      "entityType": "uniques"
+      "table": "working_weekly_schedules",
+      "entityType": "pks"
     },
     {
       "nameExplicit": false,

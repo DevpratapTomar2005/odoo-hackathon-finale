@@ -4,6 +4,9 @@ import { globalErrorHandler } from "./middlewares/globalErrorHandler.middleware.
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import weeklyScheduleRouter from "./routes/weeklySchedule.routes.js";
+import contractRouter from "./routes/contract.route.js";
+import attendenceRouter from "./routes/attendence.route.js";
+
 const app = express();
 
 app.use(express.json());
@@ -16,6 +19,8 @@ app.get("/health",(req,res)=>{
 app.use("/api/auth",authRouter);
 app.use("/api/user",userRouter);
 app.use("/api/weekly-schedule",weeklyScheduleRouter);
+app.use("/api/contract",contractRouter);
+app.use("/api/attendence",attendenceRouter);
 
 app.use(globalErrorHandler);
 
