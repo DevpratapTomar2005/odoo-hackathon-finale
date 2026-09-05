@@ -60,7 +60,6 @@ export const user = pgTable("users", {
   role: userRoles("role").notNull().default("EMPLOYEE"),
   firstName: varchar("first_name", { length: 50 }).notNull(),
   lastName: varchar("last_name", { length: 50 }).notNull(),
-  isVerified: boolean().default(false).notNull(),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -89,32 +88,8 @@ export const session = pgTable("sessions", {
   uniqueIndex("sessions_token_idx").on(table.token),
 ]);
 
-export const otp = pgTable("otps", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  email: varchar("email", { length: 255 }).unique().notNull(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  otp: varchar("otp", { length: 6 }).notNull(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-}, (table) => [
-  index("otps_user_id_idx").on(table.userId),
-]);
 
-export const company = pgTable("companies", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 200 }).notNull(),
-
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
 
 export const employee = pgTable("employees", {
   id: uuid("id")
@@ -128,16 +103,12 @@ export const employee = pgTable("employees", {
   designation: varchar("designation", { length: 200 }).notNull(),
   managerId: uuid("manager_id").references(() => employee.id),
   status: employmentStatus("status").notNull().default("ACTIVE"),
-  companyId: uuid("company_id")
-    .notNull()
-    .references(() => company.id),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
 }, (table) => [
   index("employees_user_id_idx").on(table.userId),
-  index("employees_company_id_idx").on(table.companyId),
   index("employees_manager_id_idx").on(table.managerId),
 ]);
 
