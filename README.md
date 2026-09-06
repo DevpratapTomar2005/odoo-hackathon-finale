@@ -27,11 +27,7 @@ PeoplePay360 implements payroll and HR functionality. Attendance, time off, cont
 - [Linting & Formatting](#linting--formatting)
 - [Deployment Notes](#deployment-notes)
 - [Troubleshooting](#troubleshooting)
-- [Roadmap](#roadmap)
-- [Mockups](#mockups)
-- [Contributing](#contributing)
-- [Team & Contact](#team--contact)
-- [License](#license)
+
 
 ---
 
