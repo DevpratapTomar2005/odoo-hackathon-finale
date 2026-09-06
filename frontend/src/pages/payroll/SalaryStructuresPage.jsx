@@ -54,6 +54,11 @@ export function SalaryStructuresPage() {
       return;
     }
 
+    if (!structureName.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Name", message: "Please enter a structure name." }));
+      return;
+    }
+
     createStructureMutation.mutate(
       { name: structureName, status: "ACTIVE" },
       {
@@ -76,6 +81,45 @@ export function SalaryStructuresPage() {
     if (!isPayrollAdmin) {
       dispatch(addToast({ type: "error", title: "Access Denied", message: "Only Payroll Managers can modify salary rules." }));
       return;
+    }
+
+    if (!ruleFormData.name.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Name", message: "Please enter a rule name." }));
+      return;
+    }
+
+    if (!ruleFormData.code.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Code", message: "Please enter a rule code." }));
+      return;
+    }
+
+    const sequenceNum = Number(ruleFormData.sequence);
+    if (ruleFormData.sequence === "" || !Number.isInteger(sequenceNum) || sequenceNum <= 0) {
+      dispatch(addToast({ type: "error", title: "Invalid Sequence", message: "Execution sequence must be a positive whole number." }));
+      return;
+    }
+
+    if (ruleFormData.computationMethod === "FIXED") {
+      const amountNum = Number(ruleFormData.amount);
+      if (ruleFormData.amount === "" || Number.isNaN(amountNum) || amountNum < 0) {
+        dispatch(addToast({ type: "error", title: "Invalid Amount", message: "Fixed amount must be a number of 0 or more." }));
+        return;
+      }
+    } else if (ruleFormData.computationMethod === "PERCENTAGE") {
+      const percentageNum = Number(ruleFormData.percentage);
+      if (ruleFormData.percentage === "" || Number.isNaN(percentageNum) || percentageNum <= 0 || percentageNum > 100) {
+        dispatch(addToast({ type: "error", title: "Invalid Percentage", message: "Percentage must be a number between 0 and 100." }));
+        return;
+      }
+      if (!ruleFormData.percentageBaseCode.trim()) {
+        dispatch(addToast({ type: "error", title: "Missing Base Code", message: "Please enter a base rule code." }));
+        return;
+      }
+    } else if (ruleFormData.computationMethod === "FORMULA") {
+      if (!ruleFormData.formula.trim()) {
+        dispatch(addToast({ type: "error", title: "Missing Formula", message: "Please enter a formula expression." }));
+        return;
+      }
     }
 
     const payload = {

@@ -85,6 +85,21 @@ export function EmployeePortalPage() {
       return;
     }
 
+    if (!requestData.startDate || !requestData.endDate) {
+      dispatch(addToast({ type: "error", title: "Missing Dates", message: "Please select both a start and end date." }));
+      return;
+    }
+
+    if (requestData.endDate < requestData.startDate) {
+      dispatch(addToast({ type: "error", title: "Invalid Date Range", message: "End date cannot be before the start date." }));
+      return;
+    }
+
+    if (!requestData.reason.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Reason", message: "Please provide a reason for the leave request." }));
+      return;
+    }
+
     createRequestMutation.mutate(
       {
         employeeId: profile.id,

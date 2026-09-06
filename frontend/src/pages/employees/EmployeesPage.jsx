@@ -96,6 +96,28 @@ export function EmployeesPage() {
       return;
     }
 
+    if (!formData.firstname.trim() || !formData.lastname.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Name", message: "Please enter both first and last name." }));
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email.trim())) {
+      dispatch(addToast({ type: "error", title: "Invalid Email", message: "Please enter a valid email address." }));
+      return;
+    }
+
+    const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!passwordPattern.test(formData.password)) {
+      dispatch(addToast({ type: "error", title: "Weak Password", message: "Password must be at least 8 characters and include an uppercase letter, a number, and a special character." }));
+      return;
+    }
+
+    if (!formData.designation.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Designation", message: "Please enter a designation." }));
+      return;
+    }
+
     const payload = {
       firstname: (formData.firstname || "").trim().toLowerCase(),
       lastname: (formData.lastname || "").trim().toLowerCase(),

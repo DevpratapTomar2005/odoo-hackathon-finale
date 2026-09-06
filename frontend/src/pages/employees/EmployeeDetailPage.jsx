@@ -96,6 +96,16 @@ export function EmployeeDetailPage() {
     e.preventDefault();
     if (!currentForm) return;
 
+    if (!currentForm.department || !currentForm.department.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Department", message: "Please select a department." }));
+      return;
+    }
+
+    if (!currentForm.designation || !currentForm.designation.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Designation", message: "Please enter a designation." }));
+      return;
+    }
+
     const updatePayload = {
       department: currentForm.department,
       designation: currentForm.designation,
@@ -124,6 +134,34 @@ export function EmployeeDetailPage() {
 
   const handleCreateContract = (e) => {
     e.preventDefault();
+
+    if (!newContractData.name || !newContractData.name.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Title", message: "Please enter a contract name or title." }));
+      return;
+    }
+
+    if (!newContractData.startDate) {
+      dispatch(addToast({ type: "error", title: "Missing Start Date", message: "Please select a contract start date." }));
+      return;
+    }
+
+    if (newContractData.endDate && newContractData.endDate < newContractData.startDate) {
+      dispatch(addToast({ type: "error", title: "Invalid Date Range", message: "End date cannot be before the start date." }));
+      return;
+    }
+
+    const contractSalaryNum = Number(newContractData.salary);
+    if (newContractData.salary === "" || Number.isNaN(contractSalaryNum) || contractSalaryNum <= 0) {
+      dispatch(addToast({ type: "error", title: "Invalid Salary", message: "Base wage must be a number greater than 0." }));
+      return;
+    }
+
+    const contractValidityNum = Number(newContractData.validity);
+    if (newContractData.validity === "" || !Number.isInteger(contractValidityNum) || contractValidityNum < 2000 || contractValidityNum > 2100) {
+      dispatch(addToast({ type: "error", title: "Invalid Validity Year", message: "Please enter a valid 4-digit validity year." }));
+      return;
+    }
+
     createContractMutation.mutate(
       {
         ...newContractData,

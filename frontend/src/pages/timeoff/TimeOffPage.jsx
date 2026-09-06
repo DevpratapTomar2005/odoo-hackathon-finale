@@ -170,6 +170,21 @@ export function TimeOffPage() {
       return;
     }
 
+    if (!requestFormData.startDate || !requestFormData.endDate) {
+      dispatch(addToast({ type: "error", title: "Missing Dates", message: "Please select both a start and end date." }));
+      return;
+    }
+
+    if (requestFormData.endDate < requestFormData.startDate) {
+      dispatch(addToast({ type: "error", title: "Invalid Date Range", message: "End date cannot be before the start date." }));
+      return;
+    }
+
+    if (!requestFormData.reason.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Reason", message: "Please provide a reason for the leave request." }));
+      return;
+    }
+
     createRequestMutation.mutate(
       {
         employeeId: requestFormData.employeeId,
@@ -199,6 +214,18 @@ export function TimeOffPage() {
       return;
     }
 
+    const allocatedDaysNum = Number(allocFormData.allocatedDays);
+    if (allocFormData.allocatedDays === "" || Number.isNaN(allocatedDaysNum) || allocatedDaysNum <= 0) {
+      dispatch(addToast({ type: "error", title: "Invalid Allocated Days", message: "Allocated days must be a number greater than 0." }));
+      return;
+    }
+
+    const allocValidityYearNum = Number(allocFormData.validityYear);
+    if (allocFormData.validityYear === "" || !Number.isInteger(allocValidityYearNum) || allocValidityYearNum < 2000 || allocValidityYearNum > 2100) {
+      dispatch(addToast({ type: "error", title: "Invalid Validity Year", message: "Please enter a valid 4-digit validity year." }));
+      return;
+    }
+
     createAllocMutation.mutate(
       {
         employeeId: allocFormData.employeeId,
@@ -222,6 +249,12 @@ export function TimeOffPage() {
 
   const handleCreateType = (e) => {
     e.preventDefault();
+
+    if (!typeFormData.name.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Name", message: "Please enter a policy type name." }));
+      return;
+    }
+
     createTypeMutation.mutate(typeFormData, {
       onSuccess: () => {
         dispatch(addToast({ type: "success", title: "Type Created", message: "New time off type registered." }));
@@ -236,6 +269,12 @@ export function TimeOffPage() {
   const handleEditType = (e) => {
     e.preventDefault();
     if (!editingType?.id) return;
+
+    if (!editTypeFormData.name.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Name", message: "Please enter a policy type name." }));
+      return;
+    }
+
     editTypeMutation.mutate(
       { id: editingType.id, data: editTypeFormData },
       {
