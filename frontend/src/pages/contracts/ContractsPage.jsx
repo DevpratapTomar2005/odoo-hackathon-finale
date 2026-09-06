@@ -76,6 +76,33 @@ export function ContractsPage() {
       return;
     }
 
+    if (!formData.name || !formData.name.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Title", message: "Please enter a contract title." }));
+      return;
+    }
+
+    if (!formData.startDate) {
+      dispatch(addToast({ type: "error", title: "Missing Start Date", message: "Please select a contract start date." }));
+      return;
+    }
+
+    if (formData.endDate && formData.endDate < formData.startDate) {
+      dispatch(addToast({ type: "error", title: "Invalid Date Range", message: "End date cannot be before the start date." }));
+      return;
+    }
+
+    const salaryNum = Number(formData.salary);
+    if (formData.salary === "" || Number.isNaN(salaryNum) || salaryNum <= 0) {
+      dispatch(addToast({ type: "error", title: "Invalid Salary", message: "Monthly base salary must be a number greater than 0." }));
+      return;
+    }
+
+    const validityNum = Number(formData.validity);
+    if (formData.validity === "" || !Number.isInteger(validityNum) || validityNum < 2000 || validityNum > 2100) {
+      dispatch(addToast({ type: "error", title: "Invalid Validity Year", message: "Please enter a valid 4-digit validity year." }));
+      return;
+    }
+
     if (editingContract) {
       updateContractMutation.mutate(
         {

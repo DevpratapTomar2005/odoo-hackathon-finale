@@ -49,10 +49,37 @@ export function SchedulesPage() {
 
   const handleCreateSchedule = (e) => {
     e.preventDefault();
+
+    if (!scheduleName.trim()) {
+      dispatch(addToast({ type: "error", title: "Missing Name", message: "Please enter a schedule template name." }));
+      return;
+    }
+
     const activeDays = daysState.filter((d) => d.enabled);
     if (activeDays.length === 0) {
       dispatch(addToast({ type: "error", title: "No Days Active", message: "Enable at least one working day." }));
       return;
+    }
+
+    for (const d of activeDays) {
+      if (!d.startTime || !d.endTime) {
+        dispatch(addToast({ type: "error", title: "Missing Time", message: `Please set start and end time for ${d.day}.` }));
+        return;
+      }
+      if (d.endTime <= d.startTime) {
+        dispatch(addToast({ type: "error", title: "Invalid Time Range", message: `End time must be after start time for ${d.day}.` }));
+        return;
+      }
+      const dayHoursNum = Number(d.dayHours);
+      if (d.dayHours === "" || Number.isNaN(dayHoursNum) || dayHoursNum <= 0 || dayHoursNum > 24) {
+        dispatch(addToast({ type: "error", title: "Invalid Hours", message: `Daily hours for ${d.day} must be a number between 0 and 24.` }));
+        return;
+      }
+      const breakMinutesNum = Number(d.breakMinutes);
+      if (d.breakMinutes === "" || Number.isNaN(breakMinutesNum) || breakMinutesNum < 0) {
+        dispatch(addToast({ type: "error", title: "Invalid Break Minutes", message: `Break minutes for ${d.day} must be 0 or more.` }));
+        return;
+      }
     }
 
     const payload = {

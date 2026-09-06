@@ -121,8 +121,12 @@ export function PayrollPage() {
   };
 
   const handleCreatePayrun = () => {
-    if (!wizardData.name || !wizardData.salaryStructureId) {
+    if (!wizardData.name.trim() || !wizardData.salaryStructureId) {
       dispatch(addToast({ type: "error", title: "Incomplete", message: "Please specify payrun name and structure." }));
+      return;
+    }
+    if (!wizardData.periodStart || !wizardData.periodEnd || wizardData.periodEnd < wizardData.periodStart) {
+      dispatch(addToast({ type: "error", title: "Invalid Period", message: "Please provide a valid period start and end date." }));
       return;
     }
     if (wizardData.selectedEmployeeIds.length === 0) {
@@ -425,8 +429,16 @@ export function PayrollPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (!wizardData.name || !wizardData.salaryStructureId) {
+                  if (!wizardData.name.trim() || !wizardData.salaryStructureId) {
                     dispatch(addToast({ type: "error", title: "Required Fields", message: "Enter name and structure." }));
+                    return;
+                  }
+                  if (!wizardData.periodStart || !wizardData.periodEnd) {
+                    dispatch(addToast({ type: "error", title: "Missing Period", message: "Please select both period start and end dates." }));
+                    return;
+                  }
+                  if (wizardData.periodEnd < wizardData.periodStart) {
+                    dispatch(addToast({ type: "error", title: "Invalid Period", message: "Period end date cannot be before the start date." }));
                     return;
                   }
                   setWizardStep(2);

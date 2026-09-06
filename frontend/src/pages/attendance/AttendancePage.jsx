@@ -133,6 +133,28 @@ export function AttendancePage() {
     e.preventDefault();
     if (!selectedRecord?.id) return;
 
+    if (!correctionData.date) {
+      dispatch(addToast({ type: "error", title: "Missing Date", message: "Please select a date for this record." }));
+      return;
+    }
+
+    const workedHoursNum = Number(correctionData.workedHours);
+    if (correctionData.workedHours === "" || Number.isNaN(workedHoursNum) || workedHoursNum < 0 || workedHoursNum > 24) {
+      dispatch(addToast({ type: "error", title: "Invalid Worked Hours", message: "Worked hours must be a number between 0 and 24." }));
+      return;
+    }
+
+    const overtimeHoursNum = Number(correctionData.overtimeHours);
+    if (correctionData.overtimeHours !== "" && (Number.isNaN(overtimeHoursNum) || overtimeHoursNum < 0 || overtimeHoursNum > 24)) {
+      dispatch(addToast({ type: "error", title: "Invalid Overtime Hours", message: "Overtime hours must be a number between 0 and 24." }));
+      return;
+    }
+
+    if (!correctionData.status) {
+      dispatch(addToast({ type: "error", title: "Missing Status", message: "Please select an attendance status." }));
+      return;
+    }
+
     correctAttendanceMutation.mutate(
       {
         id: selectedRecord.id,
@@ -159,6 +181,23 @@ export function AttendancePage() {
     e.preventDefault();
     if (!newAttendance.employeeId) {
       dispatch(addToast({ type: "error", title: "Missing Field", message: "Please select an employee." }));
+      return;
+    }
+
+    if (!newAttendance.date) {
+      dispatch(addToast({ type: "error", title: "Missing Date", message: "Please select a date for this record." }));
+      return;
+    }
+
+    const newWorkedHoursNum = Number(newAttendance.workedHours);
+    if (newAttendance.workedHours === "" || Number.isNaN(newWorkedHoursNum) || newWorkedHoursNum < 0 || newWorkedHoursNum > 24) {
+      dispatch(addToast({ type: "error", title: "Invalid Worked Hours", message: "Worked hours must be a number between 0 and 24." }));
+      return;
+    }
+
+    const newOvertimeHoursNum = Number(newAttendance.overtimeHours);
+    if (newAttendance.overtimeHours !== "" && (Number.isNaN(newOvertimeHoursNum) || newOvertimeHoursNum < 0 || newOvertimeHoursNum > 24)) {
+      dispatch(addToast({ type: "error", title: "Invalid Overtime Hours", message: "Overtime hours must be a number between 0 and 24." }));
       return;
     }
 
